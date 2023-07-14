@@ -1,0 +1,1 @@
+cp /home/ubuntu/config/*.php /var/www/html/cau-michelin/config/
