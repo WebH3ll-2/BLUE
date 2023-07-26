@@ -33,18 +33,18 @@ class Reviews
             echo 'This is review ' . $params['id'] . '!';
         }
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-            echo 'review updated!';
+            echo 'review ' . $params['id'] . ' updated!';
         }
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            echo 'review deleted!';
+            echo 'review ' . $params['id'] . ' deleted!';
         }
     }
 
     // api/reviews/:id/image
     public function uploadImage($params)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            echo 'review image uploaded!';
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            echo 'This is review ' . $params['id'] . '. image path = ...';
         }
     }
 
@@ -52,6 +52,9 @@ class Reviews
     // api/reviews/reply-comment
     public function replyComment($params)
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            echo 'This is review ' . $params['id'] . '. comments { ... }';
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo 'review commented!';
         }
@@ -61,8 +64,11 @@ class Reviews
     // api/reviews/like-review
     public function likeReview($params)
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            echo 'This is review ' . $params['id'] . '. count like: 10';
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            echo 'review liked!';
+            echo 'review ' . $params['id'] . ' liked!';
         }
     }
 }
