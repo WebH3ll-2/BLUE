@@ -90,7 +90,6 @@ class Router
     {
         $controller = $this->getNamespace() . $this->params['controller'];
         $action = $this->getCapitalizeAction($this->params['action']);
-        echo 'controller: ' . $controller . '<br/>' . ' action: ' . $action . '<br/>' ;
 
         if (class_exists($controller)) {
             $controller = new $controller();
