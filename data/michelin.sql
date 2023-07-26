@@ -16,6 +16,8 @@ CREATE TABLE user(
     name VARCHAR(50) NOT NULL,
     password VARCHAR(50) NOT NULL,
     profile VARCHAR(50) DEFAULT 'default.png',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id)
 );
 
@@ -27,6 +29,8 @@ CREATE TABLE review(
     review_image VARCHAR(50) DEFAULT 'no-image.png',
     review_address VARCHAR(50) NOT NULL,
     review_likes INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (review_id),
     FOREIGN KEY (author_id) REFERENCES user(user_id)
 );
@@ -36,6 +40,8 @@ CREATE TABLE comment(
     user_id INT NOT NULL,
     review_id INT NOT NULL,
     comment_content VARCHAR(400) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (comment_id),
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (review_id) REFERENCES review(review_id)
@@ -45,6 +51,8 @@ CREATE TABLE bookmark(
     bookmark_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     review_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (bookmark_id),
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (review_id) REFERENCES review(review_id)
