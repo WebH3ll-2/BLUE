@@ -11,7 +11,7 @@ USE `michelin_db`;
 -- --------------------------
 --     Table structures    --
 -- --------------------------
-CREATE TABLE USER(
+CREATE TABLE user(
     user_id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     password VARCHAR(50) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE USER(
     PRIMARY KEY (user_id)
 );
 
-CREATE TABLE REVIEW(
+CREATE TABLE review(
     review_id INT NOT NULL AUTO_INCREMENT,
     author_id INT NOT NULL,
     review_title VARCHAR(50) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE REVIEW(
     FOREIGN KEY (author_id) REFERENCES USER(user_id)
 );
 
-CREATE TABLE COMMENT(
+CREATE TABLE comment(
     comment_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     review_id INT NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE BOOKMARK(
     FOREIGN KEY (review_id) REFERENCES REVIEW(review_id)
 );
 
-CREATE TABLE LIKES(
+CREATE TABLE likes(
     likes_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     review_id INT NOT NULL,
