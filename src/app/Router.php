@@ -39,8 +39,7 @@ class Router
         $route = preg_replace('/\//', '\\/', $route);
 
         // Convert variables e.g. {controller}
-        $route = preg_replace('/\{([a-z0-9]+)\}/', '(?P<\1>[a-z0-9-]+)', $route);
-
+        $route = preg_replace('/\{([a-z0-9]+)\}/', '(?P<\1>([a-z0-9-]+))', $route);
         // Convert variables with custom regular expressions e.g. {id:\d+} for numbers
         $route = preg_replace('/\{([a-z0-9]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
 
@@ -90,7 +89,8 @@ class Router
     public function redirect(): void
     {
         $controller = $this->getNamespace() . $this->params['controller'];
-        $action = $this->capitalizeAction($this->params['action']);
+        $action = $this->getCapitalizeAction($this->params['action']);
+        echo 'controller: ' . $controller . '<br/>' . ' action: ' . $action . '<br/>' ;
 
         if (class_exists($controller)) {
             $controller = new $controller();
@@ -103,6 +103,8 @@ class Router
                 die('Page not found.');
             }
         } else {
+            throw new \Exception("Controller class $controller not found");
+            // echo 'controller class not exists';
             // header('location: ' . URLROOT);
         }
 
@@ -128,11 +130,16 @@ class Router
      * Camel case the 'action' string
      * If in the URL the action is something like '{controller}/add-new-task'...
      * ... change it to 'addNewTask' in order to make it match with a class method
-     * @param string $action Get the 'action' from the URL
+     * @param $action Get the 'action' from the URL
      * @return string      Camel Cased 'action' string
      */
-    private function capitalizeAction(string $action): string
+    private function getCapitalizeAction($action): string
     {
+        // check if action is empty
+        if (empty($action)) {
+            $action = 'root';
+        }
+
         $action = explode('-', $action);
 
         for($i=1; $i < count($action); $i++) {
