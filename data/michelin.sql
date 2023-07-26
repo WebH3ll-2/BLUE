@@ -28,7 +28,7 @@ CREATE TABLE review(
     review_address VARCHAR(50) NOT NULL,
     review_likes INT DEFAULT 0,
     PRIMARY KEY (review_id),
-    FOREIGN KEY (author_id) REFERENCES USER(user_id)
+    FOREIGN KEY (author_id) REFERENCES user(user_id)
 );
 
 CREATE TABLE comment(
@@ -37,17 +37,17 @@ CREATE TABLE comment(
     review_id INT NOT NULL,
     comment_content VARCHAR(400) NOT NULL,
     PRIMARY KEY (comment_id),
-    FOREIGN KEY (user_id) REFERENCES USER(user_id),
-    FOREIGN KEY (review_id) REFERENCES REVIEW(review_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (review_id) REFERENCES review(review_id)
 );
 
-CREATE TABLE BOOKMARK(
+CREATE TABLE bookmark(
     bookmark_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     review_id INT NOT NULL,
     PRIMARY KEY (bookmark_id),
-    FOREIGN KEY (user_id) REFERENCES USER(user_id),
-    FOREIGN KEY (review_id) REFERENCES REVIEW(review_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (review_id) REFERENCES review(review_id)
 );
 
 CREATE TABLE likes(
@@ -55,8 +55,8 @@ CREATE TABLE likes(
     user_id INT NOT NULL,
     review_id INT NOT NULL,
     PRIMARY KEY (likes_id),
-    FOREIGN KEY (user_id) REFERENCES USER(user_id),
-    FOREIGN KEY (review_id) REFERENCES REVIEW(review_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (review_id) REFERENCES review(review_id)
 );
 
 
