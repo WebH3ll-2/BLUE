@@ -2,19 +2,33 @@
 
 namespace Controllers\API;
 
+use Models\ReviewModel;
+
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
 /**
  * http://localhost/cau-michelin/api/reviews
  */
 class Reviews
 {
+    private $reviewModel;
+
+    public function __construct()
+    {
+        $this->reviewModel = new ReviewModel();
+    }
+
     // api/reviews
     // api/reviews/root
     public function root()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            echo 'This is reviews!';
+            echo $this->reviewModel->getAllReviews();
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $author_id = 1; #TODO: call this from session
+            $this->reviewModel->createReview($author_id, $_POST['title'], $_POST['content'], 'image.png', $_POST['address']);
             echo 'review created!';
         }
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
@@ -30,13 +44,28 @@ class Reviews
     public function processReviewWithId($params)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            echo 'This is review ' . $params['id'] . '!';
+            echo $this->reviewModel->getReviewById($params['id']);
         }
+
+        // check if author of review is the same as the author of request
+        $author_id = 1; #TODO: call this from session
+        if (!$this->reviewModel->checkReviewAuthor($params['id'], $author_id)) {
+            echo 'you are not the author of this review!';
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-            echo 'review ' . $params['id'] . ' updated!';
+            // get PUT body
+            parse_str(file_get_contents('php://input'), $_PUT);
+
+            if ($this->reviewModel->updateReviewById($params['id'], $_PUT['title'], $_PUT['content'], $_PUT['address'])) {
+                echo 'review updated!';
+            }
         }
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            echo 'review ' . $params['id'] . ' deleted!';
+            if ($this->reviewModel->deleteReviewById($params['id'])) {
+                echo 'review deleted!';
+            }
         }
     }
 
