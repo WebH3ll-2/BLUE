@@ -13,7 +13,7 @@ USE `michelin_db`;
 -- --------------------------
 CREATE TABLE user(
     user_id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(50) NOT NULL,
     profile VARCHAR(50) DEFAULT 'default.png',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
