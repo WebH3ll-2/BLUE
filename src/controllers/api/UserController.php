@@ -2,20 +2,29 @@
 
 namespace Controllers\API;
 
+use Models\UserModel;
+
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
 /**
  * http://localhost/cau-michelin/api/users
  */
 class Users
 {
+    private $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new UserModel();
+    }
+
     // api/users
     // api/users/root
     public function root()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             echo 'get all users!';
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            echo 'users created!';
         }
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             echo 'users updated!';
@@ -29,7 +38,19 @@ class Users
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            echo 'user registered!';
+            // validate if name, password, profile is empty
+            if (empty($_POST['name']) || empty($_POST['password'])) {
+                echo 'name, password is required!';
+                return;
+            }
+            // check if this array $_FILES['profile'] is uploaded
+            if (empty($_FILES['profile'])) {
+                $this->userModel->createUser($_POST['name'], $_POST['password'], 'default.png');
+                return;
+            }
+            // var_dump($_FILES['profile']);
+
+            $this->userModel->createUser($_POST['name'], $_POST['password'], 'path/to/image.png');
         }
     }
 
@@ -82,6 +103,7 @@ class Users
     // api/users/:id
     public function getUserById($params)
     {
-        echo 'get user ' . $params['id'];
+        $user = $this->userModel->getUserById($params['id']);
+        echo json_encode($user);
     }
 }
