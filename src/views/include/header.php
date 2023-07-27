@@ -39,8 +39,8 @@
 					</ul>
 				</li>
 			<?php else : ?>
-				<a class="nav-link" href="<?= URLROOT; ?>/register">회원가입</a>
-				<a class="nav-link" href="<?= URLROOT; ?>">로그인</a>
+				<a class="nav-link nav-left-menu" href="<?= URLROOT; ?>/register">회원가입</a>
+				<a class="nav-link nav-left-menu" href="<?= URLROOT; ?>">로그인</a>
 			<?php endif; ?>
 		</div>
 		</div>
