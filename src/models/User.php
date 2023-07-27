@@ -32,6 +32,16 @@ class UserModel
     /**
      * READ
      */
+    public function getUserByName($name)
+    {
+        $this->db->query("SELECT `user_id`, `name`, `password`, `profile` FROM user WHERE name = :name");
+        $this->db->bind(':name', $name);
+        return $this->db->single();
+    }
+
+    /**
+     * READ
+     */
     public function getUserById($uid)
     {
         $this->db->query("SELECT `name`, `profile` FROM user WHERE user_id = :uid");

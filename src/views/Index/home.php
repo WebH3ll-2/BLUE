@@ -1,4 +1,7 @@
-<?php require_once APPROOT . '/src/views/include/header.php'; ?>
+<?php
+require_once APPROOT . '/src/views/include/header.php';
+SessionModel::lazyInit();
+?>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-6 mx-auto">
@@ -19,7 +22,6 @@
                         </div>
                         <div class="d-grid gap-2">
                             <input type="submit" value="로그인" class="btn btn-success">
-                            <!-- small text link to register -->
                             <div class="text-end mt-3">
                                 아직 회원이 아니신가요? <a style="color: #00008b;" href="<?= URLROOT; ?>/register">회원가입</a>
                             </div>

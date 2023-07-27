@@ -3,6 +3,7 @@
 namespace Controllers\API;
 
 use Models\UserModel;
+use Models\SessionModel;
 
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
@@ -27,9 +28,11 @@ class Users
             echo 'get all users!';
         }
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            http_response_code(201);
             echo 'users updated!';
         }
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            http_response_code(201);
             echo 'users deleted!';
         }
     }
@@ -38,27 +41,61 @@ class Users
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // validate if name, password, profile is empty
-            if (empty($_POST['name']) || empty($_POST['password'])) {
-                echo 'name, password is required!';
+            $data = $this->validate_user_info($_POST['id'], $_POST['password']);
+            if (!empty($data['id_err']) || !empty($data['password_err'])) {
+                http_response_code(400);
+                echo json_encode($data);
                 return;
             }
+            if ($this->userModel->getUserByName($_POST['id'])) {
+                http_response_code(400);
+                $data['id_err'] = '이미 존재하는 아이디입니다.';
+                echo json_encode($data);
+                return;
+            }
+
             // check if this array $_FILES['profile'] is uploaded
             if (empty($_FILES['profile'])) {
-                $this->userModel->createUser($_POST['name'], $_POST['password'], 'default.png');
+                $this->userModel->createUser($_POST['id'], $_POST['password'], 'default.png');
                 return;
             }
             // var_dump($_FILES['profile']);
 
-            $this->userModel->createUser($_POST['name'], $_POST['password'], 'path/to/image.png');
+            // TODO: hash password
+            $this->userModel->createUser($_POST['id'], $_POST['password'], 'path/to/image.png');
+
+            http_response_code(201);
+            echo json_encode(['status' => 'success']);
         }
     }
 
     // api/users/login
     public function login()
     {
+        SessionModel::lazyInit();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            echo 'user login!';
+            $data = $this->validate_user_info($_POST['id'], $_POST['password']);
+            if (!empty($data['id_err']) || !empty($data['password_err'])) {
+                http_response_code(400);
+                echo json_encode($data);
+                return;
+            }
+
+            $user = $this->userModel->getUserByName($_POST['id']);
+            if (!$user || empty($user) || $_POST['password'] !== $user->password) {
+                $data['password_err'] = 'wrong password!';
+                http_response_code(400);
+                echo json_encode($data);
+                return;
+            }
+
+            // create session
+            $_SESSION['user_id'] = $user->user_id;
+            $_SESSION['name'] = $user->name;
+            $_SESSION['profile'] = $user->profile;
+
+            unset($user->password);
+            echo json_encode(['status' => 'success', 'user' => $user]);
         }
     }
 
@@ -66,14 +103,25 @@ class Users
     public function logout()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            echo 'user logout!';
+            SessionModel::logout();
+            echo json_encode(['status' => 'success']);
         }
     }
 
     // api/users/me
     public function me()
     {
-        echo 'user info!';
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // check user info from session
+            $user = SessionModel::getLoggedInUser();
+            if (!$user) {
+                // status code 401: unauthorized
+                http_response_code(401);
+                echo json_encode(['status' => 'fail', 'message' => 'not logged in']);
+                return;
+            }
+            echo json_encode(['status' => 'success', 'user' => $user]);
+        }
     }
 
     // api/users/me/bookmark
@@ -103,7 +151,27 @@ class Users
     // api/users/:id
     public function getUserById($params)
     {
+        // check if user is logged in
+        if (!SessionModel::isLoggedIn()) {
+            http_response_code(401);
+            echo json_encode(['status' => 'fail', 'message' => 'not logged in']);
+            return;
+        }
+
         $user = $this->userModel->getUserById($params['id']);
         echo json_encode($user);
+    }
+
+    private function validate_user_info($name, $password)
+    {
+        $data = array();
+        // validate if name, password is empty
+        if (empty($_POST['id'])) {
+            $data['id_err'] = 'name is required!';
+        }
+        if (empty($_POST['password'])) {
+            $data['password_err'] = 'password is required!';
+        }
+        return $data;
     }
 }
