@@ -34,7 +34,7 @@ class UserModel
      */
     public function getUserById($uid)
     {
-        $this->db->query("SELECT * FROM user WHERE user_id = :uid");
+        $this->db->query("SELECT `name`, `profile` FROM user WHERE user_id = :uid");
         $this->db->bind(':uid', $uid);
         return $this->db->single();
     }
