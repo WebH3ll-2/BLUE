@@ -41,16 +41,14 @@ class Users
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = $this->validate_user_info($_POST['id'], $_POST['password']);
-            if (!empty($data['id_err']) || !empty($data['password_err'])) {
-                http_response_code(400);
-                echo json_encode($data);
+            $error_data = $this->validate_user_info($_POST['id'], $_POST['password']);
+            if (!empty($data['id']) || !empty($error_data['password'])) {
+                echo $this->error_response($error_data);
                 return;
             }
             if ($this->userModel->getUserByName($_POST['id'])) {
-                http_response_code(400);
-                $data['id_err'] = '이미 존재하는 아이디입니다.';
-                echo json_encode($data);
+                $error_data['id'] = '이미 존재하는 아이디입니다.';
+                echo $this->error_response($error_data);
                 return;
             }
 
@@ -74,18 +72,16 @@ class Users
     {
         SessionModel::lazyInit();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = $this->validate_user_info($_POST['id'], $_POST['password']);
-            if (!empty($data['id_err']) || !empty($data['password_err'])) {
-                http_response_code(400);
-                echo json_encode($data);
+            $error_data = $this->validate_user_info($_POST['id'], $_POST['password']);
+            if (!empty($error_data['id']) || !empty($error_data['password'])) {
+                echo $this->error_response($error_data);
                 return;
             }
 
             $user = $this->userModel->getUserByName($_POST['id']);
             if (!$user || empty($user) || $_POST['password'] !== $user->password) {
-                $data['password_err'] = 'wrong password!';
-                http_response_code(400);
-                echo json_encode($data);
+                $error_data['password'] = 'wrong password!';
+                echo $this->error_response($error_data);
                 return;
             }
 
@@ -115,11 +111,10 @@ class Users
             // check user info from session
             $user = SessionModel::getLoggedInUser();
             if (!$user) {
-                // status code 401: unauthorized
-                http_response_code(401);
-                echo json_encode(['status' => 'fail', 'message' => 'not logged in']);
+                echo $this->error_response(['status' => 'fail', 'message' => 'not logged in'], 401);
                 return;
             }
+
             echo json_encode(['status' => 'success', 'user' => $user]);
         }
     }
@@ -153,8 +148,7 @@ class Users
     {
         // check if user is logged in
         if (!SessionModel::isLoggedIn()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'fail', 'message' => 'not logged in']);
+            echo $this->error_response(['status' => 'fail', 'message' => 'not logged in'], 401);
             return;
         }
 
@@ -164,14 +158,20 @@ class Users
 
     private function validate_user_info($name, $password)
     {
-        $data = array();
+        $error_data = array();
         // validate if name, password is empty
         if (empty($_POST['id'])) {
-            $data['id_err'] = 'name is required!';
+            $error_data['id'] = 'name is required!';
         }
         if (empty($_POST['password'])) {
-            $data['password_err'] = 'password is required!';
+            $error_data['password'] = 'password is required!';
         }
-        return $data;
+        return $error_data;
+    }
+
+    private function error_response($error_data, $status_code = 400)
+    {
+        http_response_code($status_code);
+        return json_encode(["status" => "fail", "errors" => $error_data]);
     }
 }

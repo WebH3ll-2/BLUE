@@ -21,8 +21,8 @@ $router->addRoute('api/users/me/reviews', ['namespace' => 'API', 'controller' =>
 
 // Static Routes for reviews rest api
 $router->addRoute('api/reviews/{id:\d+}', ['namespace' => 'API', 'controller' => 'Reviews', 'action' => 'processReviewWithId']);
-$router->addRoute('api/reviews/{id:\d+}/images', ['namespace' => 'API', 'controller' => 'Reviews',  'action' => 'uploadImage']);
-$router->addRoute('api/reviews/{id:\d+}/comments', ['namespace' => 'API', 'controller' => 'Reviews',  'action' => 'replyComment']);
-$router->addRoute('api/reviews/{id:\d+}/like', ['namespace' => 'API', 'controller' => 'Reviews',  'action' => 'likeReview']);
+$router->addRoute('api/reviews/{id:\d+}/images', ['namespace' => 'API', 'controller' => 'Reviews', 'action' => 'uploadImage']);
+$router->addRoute('api/reviews/{id:\d+}/comments', ['namespace' => 'API', 'controller' => 'Reviews', 'action' => 'replyComment']);
+$router->addRoute('api/reviews/{id:\d+}/like', ['namespace' => 'API', 'controller' => 'Reviews', 'action' => 'likeReview']);
 
 $router->setParams(getUri());
